@@ -14,19 +14,19 @@ spec:
     spec:
       containers:
         - name: nodemanager
-          image: localhost:5000/gradual-nodemanager:8000-v2
+          image: localhost:5000/gradual-nodemanager:8000-stable
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
           resources:
             requests:
-              cpu: 100m
-              memory: 100Mi
+              cpu: 200m
+              memory: 200Mi
             limits:
               cpu: 200m
               memory: 200Mi
         - name: nodemanager-heartbeat
-          image: localhost:5000/gradual-nodemanager:heartbeat
+          image: localhost:5000/gradual-nodemanager:heartbeat-stable
           imagePullPolicy: Always
           resources:
             requests:
