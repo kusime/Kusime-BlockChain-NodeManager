@@ -25,16 +25,16 @@ spec:
             limits:
               cpu: 200m
               memory: 200Mi
-        # - name: nodemanager-heartbeat
-        #   image: localhost:5000/gradual-nodemanager:heartbeat
-        #   imagePullPolicy: Always
-        #   resources:
-        #     requests:
-        #       cpu: 100m
-        #       memory: 100Mi
-        #     limits:
-        #       cpu: 100m
-        #       memory: 100Mi
+        - name: nodemanager-heartbeat
+          image: localhost:5000/gradual-nodemanager:heartbeat
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 100Mi
 ---
 apiVersion: v1
 kind: Service
