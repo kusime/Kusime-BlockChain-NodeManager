@@ -4,3 +4,5 @@ will up 2 service
 2.  heartbeats will be send the NodeManager that noticed
 3.  if some node seems to be dead , the heartbeats will notice the node manager ,
 4.  then the NodeManager will check if the sus node is really dead
+
+RunningPort: 6000

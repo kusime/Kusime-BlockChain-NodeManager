@@ -4,6 +4,8 @@ from flask import Flask, jsonify, request
 # cors fix
 from flask_cors import CORS
 
+from Ku_Crypto.Ku_RSA import Ku_RSA
+
 # TODO: check node alive
 # TODO: when node is dead , remove from the list
 
@@ -81,11 +83,53 @@ def get_node():
 
 
 # determined where the heartbeats saying is true
+@app.route('/death', methods=['POST'])
+def death():
+    # Rule: we should validate the death signature to prevent fake death
+    # {
+    #   "death_node_id": "",
+    #   "signature": "" <-- the signature of self "death_node_id"
+    # }
+    death_info = request.get_json()
+    death_node_id = death_info["death_node_id"]
+    signature = death_info["signature"]
+    if death_node_id not in managed_nodes:
+        api_return = {
+            "message": "your node is not managed by this NodeManager , request dropped",
+        }
+        print("Your node is not managed by this NodeManager")
+        return jsonify(api_return), 403
+    death_node_pub = managed_nodes_pub[death_node_id]
+
+    if not Ku_RSA._validate_object(death_node_pub, signature, death_node_id):
+        api_return = {
+            "message": "Validation failed , refuse to death this node",
+        }
+        print("RSA check Failed...")
+        return jsonify(api_return), 403
+    print("Validation passed, now deleting this node from NodeManager")
+    # Rule: removing the death node
+    print(
+        f"LOG : check sus   node {death_node_id} dead, removing rsa_pub and node")
+    managed_nodes.discard(death_node_id)
+    # Remove rsa_pub from managed key pool
+    try:
+        del managed_nodes_pub[death_node_id]
+    except KeyError:
+        print(
+            f"The key {death_node_id}'s key already removed from the RSA pool.")
+
+    api_return = {
+        "message": f"this node is removed ",
+        "nodes": list(managed_nodes)
+    }
+    return jsonify(api_return), 200
 
 
 @app.route('/check-node', methods=['POST'])
 def check_node():
-    # Rule {"sus_node": "ip:port"}
+    # Rule {"sus_node": "ip:port",
+    # "|fast_death":True/False|}
     check_info = request.get_json()
     sus_node = check_info['sus_node']
     fast_death = check_info.get("fast_death", False)
@@ -134,4 +178,4 @@ def check_node():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=6000)
+    app.run(host="0.0.0.0", port=8000)
