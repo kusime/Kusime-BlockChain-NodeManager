@@ -82,6 +82,14 @@ def get_node():
     return jsonify(api_return), 200
 
 
+@app.route('/get-pubs', methods=['GET'])
+def get_pubs():
+    """
+        get all managed node's rsa
+    """
+    return list(managed_nodes_pub), 200
+
+
 # determined where the heartbeats saying is true
 @app.route('/death', methods=['POST'])
 def death():
